@@ -3,6 +3,7 @@ $EmailTo = "it.reports@yourcompany.com"
 $EmailSubject = "Domain Account Expiration Report"
 $SMTPServer = "smtp.yourcompany.com"
 
+$LogContents = "" 
 $OU = "OU=USERS,DC=yourdomain,DC=com"
 $daysToExpiry = 14
 
@@ -28,12 +29,15 @@ Get-ADUser -Filter 'enabled -eq $true' -SearchBase "$OU" -Properties directRepor
          $emailBody += "</table><br>This is an automated report.<br>If you wish to extend or disable the above accounts, please contact IT by replying to this email or calling 0123 456 7890.<br><br>"
          $emailBody += "<small>Report generated on " + (Get-Date -Format "dd/MM/yyyy HH:mm") + " by IT</small><br>"
          Send-MailMessage -From $EmailFrom -To $managerEmailAddress -Subject $EmailSubject -Body $body -BodyAsHtml -SmtpServer $SMTPServer
-#         Send-MailMessage -From $EmailFrom -To $EmailTo -Subject $EmailSubject -Body $emailBody -BodyAsHtml -SmtpServer $SMTPServer
+         $LogContents += $emailBody
+         $LogContents += "<hr>"
     }
     $sendEmail = $false
 }
+# log the output to file
+Out-File -FilePath .\AD-AccountExpiryEmailManager-log.html -InputObject $LogContents 
 
-# Report for users with no manager info
+# Summary report for users with no manager info
 $emailBodyNM = "<head><style>table, th, td {border: 1px solid #999999;border-collapse: collapse;} th, td {padding: 8px;}</style></head>"
 $emailBodyNM += "Dear IT Reports,<br><br>"
 $emailBodyNM += "The below accounts have expired or are about to expire in " + $daysToExpiry + " days:<br><br>"
