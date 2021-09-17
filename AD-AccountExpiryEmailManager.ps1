@@ -28,7 +28,7 @@ Get-ADUser -Filter 'enabled -eq $true' -SearchBase "$OU" -Properties directRepor
     If ($sendEmail) {
          $emailBody += "</table><br>This is an automated report.<br>If you wish to extend or disable the above accounts, please contact IT by replying to this email or calling 0123 456 7890.<br><br>"
          $emailBody += "<small>Report generated on " + (Get-Date -Format "dd/MM/yyyy HH:mm") + " by IT</small><br>"
-         Send-MailMessage -From $EmailFrom -To $managerEmailAddress -Subject $EmailSubject -Body $body -BodyAsHtml -SmtpServer $SMTPServer
+         Send-MailMessage -From $EmailFrom -To $managerEmailAddress -Subject $EmailSubject -Body $emailBody -BodyAsHtml -SmtpServer $SMTPServer
          $LogContents += $emailBody
          $LogContents += "<hr>"
     }
